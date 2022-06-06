@@ -17,16 +17,45 @@ class ToDo {
     this.dueDate,
   });
 
-  ToDo.fromJson() {}
+  ToDo.fromJson(Map<String, dynamic> json)
+      : taskName = json["taskName"],
+        taskContent = json["taskContent"],
+        category = json["category"],
+        isImportant = json["isImportant"],
+        isCompleted = json["isCompleted"],
+        craetedDate = json["craetedDate"],
+        dueDate = json["dueDate"];
 
-  Map<String, dynamic> toJson() => {};
+  Map<String, dynamic> toJson() => {
+        'taskName': taskName,
+        'taskContent': taskContent,
+        'category': category,
+        'isImportant': isImportant,
+        'isCompleted': isCompleted,
+        'craetedDate': craetedDate,
+        'dueDate': dueDate,
+      };
 
-  toString
+  @override
+  String toString() {
+    return "Task name: $taskName\nTask content: $taskContent\nCategory: $category\nImportant: $isImportant\nCompleted: $isCompleted\nDate: $craetedDate\nDue date: $dueDate";
+  }
 
-  bool operator == () ...ToDo
+  @override
+  bool operator ==(Object other) {
+    return other is ToDo &&
+        other.taskName == taskName &&
+        other.taskContent == taskContent &&
+        other.category == category &&
+        other.isImportant == isImportant &&
+        other.isCompleted == isCompleted &&
+        other.craetedDate == craetedDate &&
+        other.dueDate == dueDate;
+  }
 
-  hashcode
+  @override
+  int get hashCode => Object.hash(taskName, taskContent, category, isImportant,
+      isCompleted, craetedDate, dueDate);
 
-  copareTo
-
+  // compare to
 }
