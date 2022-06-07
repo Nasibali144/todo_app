@@ -6,6 +6,7 @@ import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const id = "splash_screen";
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
@@ -39,16 +40,13 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  _goto() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) {
-      return WelcomeScreen();
-    }));
+  Future<void> _goto() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _animatedIcon();
   }
@@ -73,7 +71,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _timer!.cancel();
   }
