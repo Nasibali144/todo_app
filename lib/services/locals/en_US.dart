@@ -5,6 +5,8 @@ const enUS = {
   "important": "Important",
   "tasks": "Tasks",
   "new_list": "New List",
+  "tasks_list": "Tasks List",
+  "house_list": "House List",
   "enter_list_title": "Enter list title",
   "create": "Create",
   "cancel": "Cancel",
@@ -23,7 +25,8 @@ const enUS = {
   "search_for_task": "Search for tasks",
   "would_you_like": "What task would you like to find?",
   "task_not_found": "Task not found",
-  "could_not_find": "We searched high and low but couldn't find\nwhat you're looking for",
+  "could_not_find":
+      "We searched high and low but couldn't find\nwhat you're looking for",
   "settings": "Settings",
   "general": "General",
   "purple": "Purple",

@@ -1,9 +1,10 @@
+import 'package:todo_app/services/locals/ru_RU.dart';
+
 import 'data_service.dart';
 import 'locals/en_US.dart';
-import 'locals/ru_RU.dart';
 import 'locals/uz_UZ.dart';
 
-enum Language {en, ru, uz}
+enum Language { en, ru, uz }
 
 class LangService {
   // field
@@ -13,7 +14,7 @@ class LangService {
   static Future<Language> currentLanguage() async {
     await _dataService.init();
     var result = await _dataService.readData(key: "language");
-    if(result != null) {
+    if (result != null) {
       _language = _stringToLanguage(result);
     }
     return _language;
@@ -28,23 +29,29 @@ class LangService {
   // getter
   static Language get language => _language;
 
-
   static Language _stringToLanguage(String lang) {
-    switch(lang) {
-      case "en" : return Language.en;
-      case "uz" : return Language.uz;
-      case "ru" : return Language.ru;
-      default: return Language.uz;
+    switch (lang) {
+      case "en":
+        return Language.en;
+      case "uz":
+        return Language.uz;
+      case "ru":
+        return Language.ru;
+      default:
+        return Language.uz;
     }
   }
 }
 
 extension LocalString on String {
   String get tr {
-    switch(LangService.language) {
-      case Language.en: return enUS[this] ?? this;
-      case Language.ru: return ruRU[this] ?? this;
-      case Language.uz: return uzUZ[this] ?? this;
+    switch (LangService.language) {
+      case Language.en:
+        return enUS[this] ?? this;
+      case Language.ru:
+        return ruRu[this] ?? this;
+      case Language.uz:
+        return uzUZ[this] ?? this;
     }
   }
 }
