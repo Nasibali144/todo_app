@@ -63,7 +63,7 @@ class ThemeService {
   /// Size: 12, color: 5946D2, w: 500, H: 20
   static TextStyle textStyleSearch({double? letterSpacing, Color? color}) {
     return TextStyle(
-      fontSize: 12,
+      fontSize: 16,
       color: color ?? colorMain,
       fontFamily: "Roboto",
       fontWeight: FontWeight.w500,

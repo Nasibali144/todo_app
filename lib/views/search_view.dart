@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/services/theme_service.dart';
 
 Future<T?> showSearchCustom<T>({
   required BuildContext context,
@@ -32,7 +33,7 @@ abstract class SearchDelegateCustom<T> {
 
   Widget? buildLeading(BuildContext context);
 
-  List<Widget>? buildActions(BuildContext context);
+  Widget? buildActions(BuildContext context);
 
   PreferredSizeWidget? buildBottom(BuildContext context) => null;
 
@@ -68,7 +69,7 @@ abstract class SearchDelegateCustom<T> {
   }
 
   void showResults(BuildContext context) {
-    _focusNode?.unfocus();
+    _focusNode?.requestFocus();
     _currentBody = _SearchBody.results;
   }
 
@@ -317,20 +318,48 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
       child: Theme(
         data: theme,
         child: Scaffold(
+          backgroundColor: Colors.grey,
           appBar: AppBar(
-            leading: widget.delegate.buildLeading(context),
-            title: TextField(
-              controller: widget.delegate._queryTextController,
-              focusNode: focusNode,
-              style: theme.textTheme.headline6,
-              textInputAction: widget.delegate.textInputAction,
-              keyboardType: widget.delegate.keyboardType,
-              onSubmitted: (String _) {
-                widget.delegate.showResults(context);
-              },
-              decoration: InputDecoration(labelText: searchFieldLabel),
+            automaticallyImplyLeading: false,
+
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+
+              children: [
+                Expanded(
+                  flex: 1,
+                    child: widget.delegate.buildLeading(context)!,
+                ),
+                const Expanded(
+                  flex: 1,
+                  child: SizedBox(),
+                ),
+                Expanded(
+                  flex: 15,
+                  child: TextField(
+                    controller: widget.delegate._queryTextController,
+                    focusNode: focusNode,
+                    style: theme.textTheme.headline6,
+                    textInputAction: widget.delegate.textInputAction,
+                    keyboardType: widget.delegate.keyboardType,
+                    onSubmitted: (String _) {
+                      widget.delegate.showResults(context);
+                    },
+                    cursorColor: ThemeService.colorMain,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 15, bottom: 10),
+                      suffixIcon: widget.delegate._queryTextController.text.isNotEmpty ? widget.delegate.buildActions(context) : null,
+                      labelText: searchFieldLabel,
+                      labelStyle: ThemeService.textStyleSearch(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      floatingLabelStyle: ThemeService.textStyleSearch(),
+                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(width: 2, color: ThemeService.colorMain)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            actions: widget.delegate.buildActions(context),
+            // actions: widget.delegate.buildActions(context),
             bottom: widget.delegate.buildBottom(context),
           ),
           body: AnimatedSwitcher(
