@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:todo_app/models/user_model.dart';
 import 'package:todo_app/screens/search_screen.dart';
 import 'package:todo_app/services/lang_service.dart';
@@ -18,11 +22,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late User _user;
+  List<FileSystemEntity> listDirectory = [];
 
   @override
   initState() {
     super.initState();
     _getUser();
+    _readFolder();
   }
 
   void _getUser() {
@@ -39,6 +45,24 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       delegate: SearchScreen(),
     );
+  }
+
+  Future<void> _readFolder() async {
+    Directory baseDir = await getApplicationDocumentsDirectory();
+
+    setState(() {
+      listDirectory = baseDir.listSync();
+    });
+    for (var element in listDirectory) {
+      if (kDebugMode) {
+        print(element.parent.path);
+        print(element.path);
+      }
+    }
+  }
+
+  Future<void> _createFolder(BuildContext context) async {
+    await showCreateDialog(context);
   }
 
   @override
@@ -110,10 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ]),
       ),
       floatingActionButton: TextButton.icon(
-        onPressed: () {
-          showCreateDialog(context);
-        },
-        icon: Icon(
+        onPressed: () => _createFolder(context),
+        icon: const Icon(
           Icons.add,
           color: ThemeService.colorMain,
         ),
