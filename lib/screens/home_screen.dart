@@ -1,19 +1,20 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:todo_app/main.dart';
 import 'package:todo_app/models/user_model.dart';
 import 'package:todo_app/screens/search_screen.dart';
 import 'package:todo_app/services/lang_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 import 'package:todo_app/services/util_service.dart';
-import 'package:todo_app/views/dioalogs.dart';
 import 'package:todo_app/views/home_item.dart';
 import 'package:todo_app/views/search_view.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = "/home_screen";
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -23,6 +24,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late User _user;
   List<FileSystemEntity> listDirectory = [];
+  final TextEditingController _controller = TextEditingController();
+  late Directory mainDirectory;
+
 
   @override
   initState() {
@@ -48,21 +52,86 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _readFolder() async {
-    Directory baseDir = await getApplicationDocumentsDirectory();
+    if(Platform.isIOS) {
+      mainDirectory = await getApplicationDocumentsDirectory();
+      listDirectory = mainDirectory.listSync();
 
-    setState(() {
-      listDirectory = baseDir.listSync();
-    });
-    for (var element in listDirectory) {
-      if (kDebugMode) {
-        print(element.parent.path);
-        print(element.path);
+      FileSystemEntity? trash;
+      for (var element in listDirectory) {
+        if(element.path.contains("/.Trash")) {
+          trash = element;
+        }
+      }
+      listDirectory.remove(trash!);
+      setState((){});
+    } else {
+      String pathAndroid = "storage/emulated/0/TodoApp";
+      if(await Permission.manageExternalStorage.request().isGranted) {
+        mainDirectory = Directory(pathAndroid);
+        bool isExist = await mainDirectory.exists();
+        if(!isExist) {
+          mainDirectory.create();
+        }
+        listDirectory = mainDirectory.listSync();
+        setState((){});
       }
     }
   }
 
-  Future<void> _createFolder(BuildContext context) async {
-    await showCreateDialog(context);
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          title: Text("new_list".tr),
+          content: Container(
+            color: ThemeService.colorTextFieldBack,
+            child: TextField(
+              controller: _controller,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: "enter_list_title".tr,
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: _cancel, child: Text("cancel".tr)),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all(const StadiumBorder())),
+              onPressed: _submit,
+              icon: const Icon(Icons.add),
+              label: Text("create".tr),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _cancel() {
+    Navigator.pop(context);
+  }
+
+  void _submit() async {
+    String folderName = _controller.text.trim().toString();
+    _controller.clear();
+
+
+    String fullPath = "${mainDirectory.path}/$folderName";
+    Directory directory = Directory(fullPath);
+    bool isExist = await directory.exists();
+    if(isExist) {
+      Utils.fireSnackBar("This folder already exist!", context);
+      Navigator.pop(context);
+    } else {
+      await directory.create();
+      Utils.fireSnackBar("Folder Successfully created!", context);
+      _readFolder();
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -104,7 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: ListView(children: [
+        child: ListView(
+            children: [
           HomeItem(
               iconColor: ThemeService.colorPink,
               icon: Icons.star_outlined,
@@ -121,20 +191,26 @@ class _HomeScreenState extends State<HomeScreen> {
             endIndent: MediaQuery.of(context).size.width * 0.04,
             indent: MediaQuery.of(context).size.width * 0.04,
           ),
-          HomeItem(
-              iconColor: ThemeService.colorMainTask,
-              icon: Icons.list,
-              title: "tasks_list".tr,
-              onPressed: () {}),
-          HomeItem(
-              iconColor: ThemeService.colorMainTask,
-              icon: Icons.list,
-              title: "house_list".tr,
-              onPressed: () {}),
+
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: listDirectory.length,
+            itemBuilder: (context, index) {
+              String currentPath = listDirectory[index].path;
+              String title = currentPath.substring(currentPath.lastIndexOf("/") + 1);
+              return HomeItem(
+                  iconColor: ThemeService.colorMainTask,
+                  icon: Icons.list,
+                  title: title,
+                  onPressed: () {},
+              );
+            },
+          ),
         ]),
       ),
       floatingActionButton: TextButton.icon(
-        onPressed: () => _createFolder(context),
+        onPressed: _showDialog,
         icon: const Icon(
           Icons.add,
           color: ThemeService.colorMain,
