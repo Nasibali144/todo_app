@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/detail_screen.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/splash_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
@@ -19,6 +20,7 @@ class TodoApp extends StatelessWidget {
         HomeScreen.id: (context) => const HomeScreen(),
         WelcomeScreen.id: (context) => const WelcomeScreen(),
         SplashScreen.id: (context) => const SplashScreen(),
+        DetailScreen.id: (context) => const DetailScreen(),
       },
     );
   }

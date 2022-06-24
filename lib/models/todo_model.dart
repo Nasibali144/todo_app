@@ -4,7 +4,7 @@ class ToDo {
   Object category;
   bool isImportant;
   bool isCompleted;
-  String craetedDate;
+  String createdDate;
   String? dueDate;
 
   ToDo({
@@ -13,7 +13,7 @@ class ToDo {
     required this.category,
     required this.isImportant,
     required this.isCompleted,
-    required this.craetedDate,
+    required this.createdDate,
     this.dueDate,
   });
 
@@ -23,7 +23,7 @@ class ToDo {
         category = json["category"],
         isImportant = json["isImportant"],
         isCompleted = json["isCompleted"],
-        craetedDate = json["craetedDate"],
+        createdDate = json["craetedDate"],
         dueDate = json["dueDate"];
 
   Map<String, dynamic> toJson() => {
@@ -32,13 +32,13 @@ class ToDo {
         'category': category,
         'isImportant': isImportant,
         'isCompleted': isCompleted,
-        'craetedDate': craetedDate,
+        'craetedDate': createdDate,
         'dueDate': dueDate,
       };
 
   @override
   String toString() {
-    return "Task name: $taskName\nTask content: $taskContent\nCategory: $category\nImportant: $isImportant\nCompleted: $isCompleted\nDate: $craetedDate\nDue date: $dueDate";
+    return "Task name: $taskName\nTask content: $taskContent\nCategory: $category\nImportant: $isImportant\nCompleted: $isCompleted\nDate: $createdDate\nDue date: $dueDate";
   }
 
   @override
@@ -49,13 +49,13 @@ class ToDo {
         other.category == category &&
         other.isImportant == isImportant &&
         other.isCompleted == isCompleted &&
-        other.craetedDate == craetedDate &&
+        other.createdDate == createdDate &&
         other.dueDate == dueDate;
   }
 
   @override
   int get hashCode => Object.hash(taskName, taskContent, category, isImportant,
-      isCompleted, craetedDate, dueDate);
+      isCompleted, createdDate, dueDate);
 
   // compare to
 }

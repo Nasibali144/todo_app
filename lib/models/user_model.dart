@@ -24,6 +24,6 @@ class User {
 
   @override
   String toString() {
-    return "Fullname: $fullName\nEmail: $email; ";
+    return "FullName: $fullName\nEmail: $email; ";
   }
 }

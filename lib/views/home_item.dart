@@ -35,9 +35,7 @@ class HomeItem extends StatelessWidget {
             ),
       title: Text(title),
       trailing: IconButton(
-        onPressed: () {
-          onPressed;
-        },
+        onPressed: () => onPressed(),
         splashRadius: 25,
         icon: const Icon(Icons.keyboard_arrow_right_outlined),
       ),

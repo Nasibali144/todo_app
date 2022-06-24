@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:todo_app/main.dart';
 import 'package:todo_app/models/user_model.dart';
+import 'package:todo_app/screens/detail_screen.dart';
 import 'package:todo_app/screens/search_screen.dart';
 import 'package:todo_app/services/lang_service.dart';
 import 'package:todo_app/services/theme_service.dart';
@@ -66,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState((){});
     } else {
       String pathAndroid = "storage/emulated/0/TodoApp";
-      if(await Permission.manageExternalStorage.request().isGranted) {
+      if(await Permission.manageExternalStorage.request().isGranted && await Permission.storage.request().isGranted) {
         mainDirectory = Directory(pathAndroid);
         bool isExist = await mainDirectory.exists();
         if(!isExist) {
@@ -124,14 +123,21 @@ class _HomeScreenState extends State<HomeScreen> {
     Directory directory = Directory(fullPath);
     bool isExist = await directory.exists();
     if(isExist) {
+      if (!mounted) return;
       Utils.fireSnackBar("This folder already exist!", context);
       Navigator.pop(context);
     } else {
       await directory.create();
+      if (!mounted) return;
       Utils.fireSnackBar("Folder Successfully created!", context);
       _readFolder();
       Navigator.pop(context);
     }
+  }
+
+  void _openDetailPage(String path) {
+    // TODO: concrete updated => provide path of DetailScreen
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DetailScreen()));
   }
 
   @override
@@ -203,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: ThemeService.colorMainTask,
                   icon: Icons.list,
                   title: title,
-                  onPressed: () {},
+                  onPressed: () => _openDetailPage(currentPath),
               );
             },
           ),
