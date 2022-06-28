@@ -20,15 +20,13 @@ class HomeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: icon == null
-          ? Container(
-              child: Image.asset(
-                imageIcon ?? "",
-                width: 20,
-                height: 20,
-                fit: BoxFit.cover,
-                color: iconColor ?? Colors.grey,
-              ),
-            )
+          ? Image.asset(
+            imageIcon ?? "",
+            width: 20,
+            height: 20,
+            fit: BoxFit.cover,
+            color: iconColor ?? Colors.grey,
+          )
           : Icon(
               icon,
               color: iconColor ?? Colors.grey,

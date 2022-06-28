@@ -6,6 +6,7 @@ import 'package:todo_app/views/to_do_detail_view.dart';
 
 class DetailScreen extends StatefulWidget {
   static const id = "/detail_screen";
+
   const DetailScreen({Key? key}) : super(key: key);
 
   @override
@@ -13,8 +14,9 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderStateMixin {
-
   late TabController _tabController;
+  bool _isCompleted = false;
+  final TextEditingController _newTodoController = TextEditingController();
 
   @override
   initState() {
@@ -29,35 +31,142 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: false,
         elevation: 0,
         backgroundColor: ThemeService.colorBackgroundLight,
-        title: Text("Folder Name", style: ThemeService.textStyleHeader(),),
+        title: Text(
+          "Folder Name",
+          style: ThemeService.textStyleHeader(),
+        ),
         leading: IconButton(
           onPressed: _goBack,
-          icon: const Icon(Icons.arrow_back, color: ThemeService.colorBlack,),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: ThemeService.colorBlack,
+          ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.mode_edit_outline_outlined, color: ThemeService.colorBlack,),),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.delete_outline, color: ThemeService.colorBlack,),)
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.mode_edit_outline_outlined,
+              color: ThemeService.colorBlack,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.delete_outline,
+              color: ThemeService.colorBlack,
+            ),
+          )
         ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: ThemeService.colorBlack,
           tabs: const [
-            Tab(text: "To Do",),
-            Tab(text: "Completed",),
+            Tab(
+              text: "To Do",
+            ),
+            Tab(
+              text: "Completed",
+            ),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          ToDoDetailView(),
-          CompletedDetailView(),
+      body: Stack(
+        children: [
+          TabBarView(
+            controller: _tabController,
+            children: const [
+              ToDoDetailView(),
+              CompletedDetailView(),
+            ],
+          ),
+
+          // #text_field
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+              onTap: () => _textField(context),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                height: 40,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: ThemeService.colorUnselected,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.add, color: ThemeService.colorBackgroundLight, size: 25,),
+                    const SizedBox(width: 7.5,),
+                    Text("Add a task", style: ThemeService.textStyleCaption(color: ThemeService.colorBackgroundLight),)
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
+    );
+  }
+
+  void _textField(BuildContext context){
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              alignment: Alignment.bottomCenter,
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom,),
+              child: Container(
+                alignment: Alignment.center,
+                color: ThemeService.colorBackgroundLight,
+                constraints: const BoxConstraints(
+                  maxHeight: 70,
+                  minHeight: 70,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  autofocus: true,
+                  controller: _newTodoController,
+                  style: ThemeService.textStyleBody(),
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    isCollapsed: false,
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: ThemeService.colorUnselected,
+                          width: 2,
+                        )
+                    ),
+                    hintText: "Add a task",
+                    prefixIcon: Checkbox(
+                      value: _isCompleted,
+                      onChanged: (bool? value) {
+                        _isCompleted = value!;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  onEditingComplete: () {
+                    FocusScope.of(context).unfocus();
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            );
+          }
+        );
+      },
     );
   }
 }

@@ -53,7 +53,9 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
       toDo.isImportant = !toDo.isImportant;
     });
   }
-  
+
+
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -72,7 +74,9 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
                   motion: const ScrollMotion(),
                   children: [
                     SlidableAction(
-                      onPressed: (context) {},
+                      onPressed: (context) {
+                        _showDialog(index);
+                      },
                       backgroundColor: ThemeService.colorPink,
                       foregroundColor: Colors.white,
                       icon: Icons.delete_outline,
@@ -108,6 +112,61 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
           child: CircularProgressIndicator(),
         ),
       ],
+    );
+  }
+
+  void _showDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          title: const Text(
+            "Are you sure?",
+            style: TextStyle(color: Color(0xff1C1B1F), fontSize: 22),
+          ),
+          content: const Text(
+            "List will be permanently deleted",
+            style: TextStyle(
+                color: Color(0x611c1b1f),
+                fontSize: 14,
+                fontWeight: FontWeight.w500),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff5946D2),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 15, bottom: 5),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(const StadiumBorder()),
+                  backgroundColor:
+                  MaterialStateProperty.all(const Color(0xffF85977)),
+                ),
+                onPressed: () {
+                  setState(() {
+                    items.removeAt(index);
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text('Delete'),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
