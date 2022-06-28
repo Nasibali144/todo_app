@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/screens/detail_screen.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/splash_screen.dart';
+import 'package:todo_app/screens/task_detail_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class TodoApp extends StatelessWidget {
         WelcomeScreen.id: (context) => const WelcomeScreen(),
         SplashScreen.id: (context) => const SplashScreen(),
         DetailScreen.id: (context) => const DetailScreen(),
+        TaskDetailScreen.id: (context) => const TaskDetailScreen(),
       },
     );
   }

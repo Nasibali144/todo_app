@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/screens/task_detail_screen.dart';
 import 'package:todo_app/services/theme_service.dart';
 import 'package:todo_app/views/completed_detail_view.dart';
 import 'package:todo_app/views/to_do_detail_view.dart';
@@ -158,8 +159,16 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
                     ),
                   ),
                   onEditingComplete: () {
+                    ToDo toDo = ToDo(
+                      taskName: _newTodoController.text.trim(),
+                      taskContent: '',
+                      category: 'folderName',
+                      isImportant: false,
+                      isCompleted: _isCompleted,
+                      createdDate: DateTime.now().toString(),
+                    );
                     FocusScope.of(context).unfocus();
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo,)));
                   },
                 ),
               ),
