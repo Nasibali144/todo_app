@@ -12,18 +12,18 @@ class LangService {
   static final DataService _dataService = DataService();
 
   static Future<Language> currentLanguage() async {
-    await _dataService.init();
-    var result = await _dataService.readData(key: "language");
-    if (result != null) {
-      _language = _stringToLanguage(result);
-    }
+    // await _dataService.init();
+    // var result = await _dataService.readData(key: "language");
+    // if (result != null) {
+    //   _language = _stringToLanguage(result);
+    // }
     return _language;
   }
 
   // setter
   static set language(Language language) {
-    _language = language;
-    _dataService.storeData(key: "language", value: _language.name);
+    // _language = language;
+    // _dataService.storeData(key: "language", value: _language.name);
   }
 
   // getter

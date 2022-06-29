@@ -1,81 +1,72 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-// may be updated
+import 'package:path_provider/path_provider.dart';
+
 class DataService {
-  Directory directory = Directory(Directory.current.path + "\\assets\\data");
+  late Directory directory;
   late File file;
 
-  ///this method use for initialization...
-  Future<void> init() async {
-    bool isDirectoryCreated = await directory.exists();
-    if(!isDirectoryCreated) {
-      await directory.create();
-    }
-    file = File(directory.path + "\\data.json");
-    bool isFileCreated = await file.exists();
-    if(!isFileCreated) {
-      await file.create();
-    }
+  Future<DataService> instance() async {
+    directory = await getApplicationSupportDirectory();
+    file = _getFile();
+    return this;
   }
 
-  ///This method to use for store data
-  Future<bool> storeData({required String key, required dynamic value}) async {
-    if(value !is num && value !is String && value !is bool && value !is List && value !is Map && value !is Set && value !is Queue) {
-      return false;
-    }
-    String source = await file.readAsString();
-    Map<String, dynamic> database;
-    if(source.isEmpty) {
-      database = {};
-    } else {
-      database = jsonDecode(source);
-    }
-    bool result = false;
-    database.addAll({key : value});
-    source = jsonEncode(database);
-    await file.writeAsString(source).whenComplete(() {result = true;}).catchError((_) {result = false;});
-    return result;
+  File _getFile() {
+    String fileName = "/database.json";
+    File file = File(directory.path + fileName);
+    return file;
   }
 
-  ///This method to use for read data
-  Future? readData({required String key}) async{
-    String source = await file.readAsString();
-    Map<String, dynamic> database;
-    if(source.isEmpty) {
-      database = {};
-    } else {
-      database = jsonDecode(source);
-    }
-
-    return database[key];
+  Future<void> _initFile() async {
+    await file.writeAsString(jsonEncode({}));
   }
 
-  ///This method to use for delete data
-  Future<bool> deleteData({required String key}) async {
-    // filedan oldingi ma'lumotlarni olepdi
-    String source = await file.readAsString();
-    // bo'shlikka tekshiradi
-    if(source.isEmpty) {
-      return false;
-    }
+  Future<Map<String, dynamic>> _getAllData() async {
+    String data = await file.readAsString();
+    Map<String, dynamic> json = jsonDecode(data);
+    return json;
+  }
 
-    Map<String, dynamic> database;
-    // String => Map
-    database = jsonDecode(source);
-    // o'chirilishi kerak bo'lgan ma'lumotni o'chirdi
-    database.remove(key);
-    // Map => String
-    source = jsonEncode(database);
-    // Filega yangi o'zgarishni saqlaydi
-    await file.writeAsString(source).catchError((_) {/* error msg*/ });
+  Future<bool> setData(String key, Object value) async {
+    // check value
+    if(value is! int && value is! String && value is! bool && value is! List && value is! Map) return false;
+
+    // check file
+    bool isFileExist = await file.exists();
+    if(!isFileExist) await _initFile();
+
+    Map<String, dynamic> json = await _getAllData();
+    json[key] = value;
+    String data = jsonEncode(json);
+    await file.writeAsString(data);
     return true;
   }
 
-  ///This method to use for clear all data
-  Future<bool> clearData() async{
-    await file.writeAsString("{}").catchError((_) {/* error msg*/ });
+  Future<dynamic> getData(String key) async {
+    String data = await file.readAsString();
+    Map<String, dynamic> json = jsonDecode(data);
+    if(json.containsKey(key)) {
+      return json[key];
+    }
+    return null;
+  }
+
+  Future<dynamic> removeData(String key) async {
+    String data = await file.readAsString();
+    Map<String, dynamic> json = jsonDecode(data);
+    if(!json.containsKey(key)) {
+      return null;
+    }
+    String result = json.remove(key);
+    data = jsonEncode(json);
+    await file.writeAsString(data);
+    return result;
+  }
+
+  Future<bool> clearAllData() async {
+    await _initFile();
     return true;
   }
 }
