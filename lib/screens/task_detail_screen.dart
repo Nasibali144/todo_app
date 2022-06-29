@@ -1,9 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
-
 import '../services/theme_service.dart';
-import '../views/completed_detail_view.dart';
-import '../views/to_do_detail_view.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   static const id = "new_screen";
@@ -16,9 +14,6 @@ class TaskDetailScreen extends StatefulWidget {
 }
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
-  //removed
-  bool showValue = false;
-  bool type = true;
 
 
   late ToDo _toDo;
@@ -37,6 +32,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     contentController = TextEditingController(text: _toDo.taskContent);
   }
 
+  void _addOrRemoveToDoInImportant(ToDo toDo) {
+    // TODO this note's isImportant field changed and changed database
+    setState((){
+      toDo.isImportant = !toDo.isImportant;
+    });
+  }
+
+  void _selectDueDate() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          backgroundColor: ThemeService.colorBackgroundLight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Text("Due", style: ,),
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +119,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 ),
                                 SizedBox(
                                   height: 50,
-                                  width: MediaQuery.of(context).size.width * 0.72,
+                                  width: MediaQuery.of(context).size.width * 0.65,
                                   child: TextField(
                                     controller: titleController,
                                     style: ThemeService.textStyleHeader(),
@@ -108,10 +131,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               ],
                             ),
                             Container(
+                              alignment: Alignment.center,
                               margin: const EdgeInsets.only(right: 20),
-                                child: _toDo.isImportant
-                                    ?const Icon(Icons.star_border, color: Color(0x991c1b1f),)
-                                    :const Icon(Icons.star, color: Color(0xffF85977),)
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () => _addOrRemoveToDoInImportant(_toDo),
+                                  icon: _toDo.isImportant ? const Icon(CupertinoIcons.star_fill, color: ThemeService.colorPink) : const Icon(CupertinoIcons.star),
+                                ),
                             ),
                           ],
                         ),
@@ -126,12 +152,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           color: Color(0x1f1c1b1f),
                         ),
                       ),
-                      type
-                          ?Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Row(
-                          children: [
-                            Container(
+                      GestureDetector(
+                        onTap: _selectDueDate,
+                        child: _toDo.dueDate == null
+                            ? Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          child: Row(
+                            children: [
+                              Container(
                                 margin: const EdgeInsets.only(
                                   left: 18,
                                 ),
@@ -141,59 +169,60 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   Icons.edit_calendar,
                                   color: Colors.grey.shade600,
                                 ),
-                            ),
-                            const SizedBox(
-                              width: 19,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Add Due Date',
-                                  style: TextStyle(
-                                      color: Colors.grey.shade700,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                          :Container(
-                            margin: const EdgeInsets.only(top: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              ),
+                              const SizedBox(
+                                width: 19,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Add Due Date',
+                                    style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                            :Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                            Row(
-                              children: [
-                                Container(
-                                    margin: const EdgeInsets.only(
-                                      left: 18,
-                                    ),
-                                    width: 24,
-                                    height: 24,
-                                    child: const Icon(
-                                      Icons.edit_calendar,
-                                      color: Color(0xff5946D2),
-                                    )
-                                ),
-                                const SizedBox(
-                                  width: 19,
-                                ),
-                                const Text(
-                                  'Due Sun, 10 April',
-                                  style: TextStyle(
-                                      color: Color(0xff5946D2),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(right: 33),
-                                child: Icon(Icons.backspace_outlined, color: Colors.grey.shade700, size: 20,)),
-                          ],
+                              Row(
+                                children: [
+                                  Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 18,
+                                      ),
+                                      width: 24,
+                                      height: 24,
+                                      child: const Icon(
+                                        Icons.edit_calendar,
+                                        color: Color(0xff5946D2),
+                                      )
+                                  ),
+                                  const SizedBox(
+                                    width: 19,
+                                  ),
+                                  const Text(
+                                    'Due Sun, 10 April',
+                                    style: TextStyle(
+                                        color: Color(0xff5946D2),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(right: 33),
+                                  child: Icon(Icons.backspace_outlined, color: Colors.grey.shade700, size: 20,)),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(
