@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/views/due_date_element_view.dart';
 import '../services/theme_service.dart';
 
 class TaskDetailScreen extends StatefulWidget {
@@ -48,13 +49,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             borderRadius: BorderRadius.circular(30),
           ),
           backgroundColor: ThemeService.colorBackgroundLight,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Text("Due", style: ,),
-              )
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Text("Due", style: ThemeService.textStyleHeader(),),
+                ),
+                const Divider(color: ThemeService.colorBlack,),
+                DueDateElement(onTap: () {}, title: "Today",),
+                DueDateElement(onTap: () {}, title: "Tomorrow",),
+                DueDateElement(onTap: () {}, title: "Next Week",),
+                DueDateElement(onTap: () {}, title: "Pick a Date", visible: true,),
+              ],
+            ),
           ),
         );
       }
@@ -263,7 +272,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   ),
                 ),
             ),
-            SizedBox(height: 170,),
+            const SizedBox(height: 170,),
             Container(
               alignment: Alignment.bottomCenter,
               margin: const EdgeInsets.only(left: 20, right: 23),
@@ -288,3 +297,5 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     );
   }
 }
+
+
