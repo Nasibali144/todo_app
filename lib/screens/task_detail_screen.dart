@@ -7,8 +7,8 @@ import '../services/theme_service.dart';
 class TaskDetailScreen extends StatefulWidget {
   static const id = "new_screen";
   final ToDo? toDo;
-  final String? path;
-  const TaskDetailScreen({Key? key, this.toDo, this.path}) : super(key: key);
+
+  const TaskDetailScreen({Key? key, this.toDo}) : super(key: key);
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -17,6 +17,7 @@ class TaskDetailScreen extends StatefulWidget {
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
 
+  String title = "Task list";
   late ToDo _toDo;
   late TextEditingController titleController;
   late TextEditingController contentController;
@@ -29,8 +30,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   void _getTodo() {
     _toDo = widget.toDo!;
+    title = _toDo.category.toString().substring(_toDo.category.toString().lastIndexOf("/") + 1);
     titleController = TextEditingController(text: _toDo.taskName);
     contentController = TextEditingController(text: _toDo.taskContent);
+    setState((){});
   }
 
   void _addOrRemoveToDoInImportant(ToDo toDo) {
@@ -88,7 +91,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         elevation: 0,
         backgroundColor: ThemeService.colorBackgroundLight,
         title: Text(
-          "Task List",
+          title,
           style: ThemeService.textStyleHeader(),
         ),
         leading: IconButton(

@@ -35,13 +35,13 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
     ToDo toDo = ToDo(
       taskName: _newTodoController.text.trim(),
       taskContent: '',
-      category: 'folderName',
+      category: directoryPath,
       isImportant: false,
       isCompleted: _isCompleted,
       createdDate: DateTime.now().toString(),
     );
     FocusScope.of(context).unfocus();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo, path: directoryPath,)));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo,)));
   }
 
   @override
