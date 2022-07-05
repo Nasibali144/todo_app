@@ -7,8 +7,8 @@ import '../services/theme_service.dart';
 class TaskDetailScreen extends StatefulWidget {
   static const id = "new_screen";
   final ToDo? toDo;
-
-  const TaskDetailScreen({Key? key, this.toDo}) : super(key: key);
+  final String? path;
+  const TaskDetailScreen({Key? key, this.toDo, this.path}) : super(key: key);
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -61,12 +61,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 DueDateElement(onTap: () {}, title: "Today",),
                 DueDateElement(onTap: () {}, title: "Tomorrow",),
                 DueDateElement(onTap: () {}, title: "Next Week",),
-                DueDateElement(onTap: () {}, title: "Pick a Date", visible: true,),
+                DueDateElement(onTap: () => _pickADate(), title: "Pick a Date", visible: true,),
               ],
             ),
           ),
         );
       }
+    );
+  }
+
+  void _pickADate() {
+    showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2100),
     );
   }
 
@@ -115,6 +124,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   width: 24,
                                   height: 24,
                                   child: Checkbox(
+                                    activeColor: ThemeService.colorMain,
                                     onChanged: (bool? value) {
                                       setState(() {
                                         _toDo.isCompleted = value!;

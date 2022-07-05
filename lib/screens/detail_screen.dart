@@ -7,8 +7,9 @@ import 'package:todo_app/views/to_do_detail_view.dart';
 
 class DetailScreen extends StatefulWidget {
   static const id = "/detail_screen";
+  final String? path;
 
-  const DetailScreen({Key? key}) : super(key: key);
+  const DetailScreen({Key? key, this.path}) : super(key: key);
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -27,6 +28,20 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
 
   void _goBack() {
     Navigator.pop(context);
+  }
+
+  void _addATask() {
+    String directoryPath = widget.path!;
+    ToDo toDo = ToDo(
+      taskName: _newTodoController.text.trim(),
+      taskContent: '',
+      category: 'folderName',
+      isImportant: false,
+      isCompleted: _isCompleted,
+      createdDate: DateTime.now().toString(),
+    );
+    FocusScope.of(context).unfocus();
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo, path: directoryPath,)));
   }
 
   @override
@@ -158,18 +173,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
                       },
                     ),
                   ),
-                  onEditingComplete: () {
-                    ToDo toDo = ToDo(
-                      taskName: _newTodoController.text.trim(),
-                      taskContent: '',
-                      category: 'folderName',
-                      isImportant: false,
-                      isCompleted: _isCompleted,
-                      createdDate: DateTime.now().toString(),
-                    );
-                    FocusScope.of(context).unfocus();
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo,)));
-                  },
+                  onEditingComplete: _addATask,
                 ),
               ),
             );

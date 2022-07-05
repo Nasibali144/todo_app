@@ -136,8 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openDetailPage(String path) {
-    // TODO: concrete updated => provide path of DetailScreen
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DetailScreen()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailScreen(path: path,)));
   }
 
   @override
