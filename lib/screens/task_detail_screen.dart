@@ -7,8 +7,9 @@ import '../services/theme_service.dart';
 class TaskDetailScreen extends StatefulWidget {
   static const id = "new_screen";
   final ToDo? toDo;
+  final DetailState state;
 
-  const TaskDetailScreen({Key? key, this.toDo}) : super(key: key);
+  const TaskDetailScreen({Key? key, this.toDo, this.state = DetailState.read}) : super(key: key);
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -43,6 +44,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     });
   }
 
+  void _goBack() {
+    Navigator.of(context).pop();
+  }
+
   void _selectDueDate() {
     showDialog(
       context: context,
@@ -61,9 +66,18 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   child: Text("Due", style: ThemeService.textStyleHeader(),),
                 ),
                 const Divider(color: ThemeService.colorBlack,),
-                DueDateElement(onTap: () {}, title: "Today",),
-                DueDateElement(onTap: () {}, title: "Tomorrow",),
-                DueDateElement(onTap: () {}, title: "Next Week",),
+                DueDateElement(onTap: () {
+                  DateTime now = DateTime.now();
+                  _toDo.dueDate = DateTime(now.year, now.month, now.day, now.hour).toString();
+                }, title: "Today",),
+                DueDateElement(onTap: () {
+                  DateTime now = DateTime.now();
+                  _toDo.dueDate = DateTime(now.year, now.month, now.day + 1, now.hour).toString();
+                }, title: "Tomorrow",),
+                DueDateElement(onTap: () {
+                  DateTime now = DateTime.now();
+                  _toDo.dueDate = DateTime(now.year, now.month, now.day + 7, now.hour).toString();
+                }, title: "Next Week",),
                 DueDateElement(onTap: () => _pickADate(), title: "Pick a Date", visible: true,),
               ],
             ),
@@ -79,7 +93,17 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime(2100),
-    );
+    ). then((value) => _getPickADate(value!));
+  }
+
+  void _getPickADate(DateTime value) {
+    _toDo.dueDate = value.toString();
+    setState(() {});
+  }
+
+  void _changeCompleted(bool? value) {
+    _toDo.isCompleted = value!;
+    setState(() {});
   }
 
   @override
@@ -95,14 +119,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           style: ThemeService.textStyleHeader(),
         ),
         leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: _goBack,
           icon: const Icon(
             Icons.arrow_back,
             color: ThemeService.colorBlack,
           ),
         ),
+        actions: [
+          if(widget.state == DetailState.read)
+            IconButton(
+              icon: const Icon(
+                Icons.edit,
+                color: ThemeService.colorBlack,
+              ),
+              onPressed: () {
+                // TODO: from read state to edit state
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(
+                Icons.done,
+                color: ThemeService.colorBlack,
+              ),
+              onPressed: () {
+                // TODO: save note
+              },
+            )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -120,6 +164,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           children: [
                             Row(
                               children: [
+
+                                // #checkbox
                                 Container(
                                   margin: const EdgeInsets.only(
                                     left: 18,
@@ -128,17 +174,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   height: 24,
                                   child: Checkbox(
                                     activeColor: ThemeService.colorMain,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        _toDo.isCompleted = value!;
-                                      });
-                                    },
+                                    onChanged: _changeCompleted,
                                     value: _toDo.isCompleted,
                                   ),
                                 ),
                                 const SizedBox(
                                   width: 19,
                                 ),
+
+                                // #title
                                 SizedBox(
                                   height: 50,
                                   width: MediaQuery.of(context).size.width * 0.65,
@@ -152,6 +196,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 ),
                               ],
                             ),
+
+                            // #important
                             Container(
                               alignment: Alignment.center,
                               margin: const EdgeInsets.only(right: 20),
@@ -311,4 +357,5 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 }
 
+enum DetailState {read, edit, create}
 
