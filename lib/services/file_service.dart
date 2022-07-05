@@ -27,7 +27,7 @@ class FileService {
     List<ToDo> toDos = [];
 
     for (var element in items) {
-      if(element.path.contains("/.Trash")) {
+      if(!element.path.contains(".todo")) {
         continue;
       }
       ToDo toDo = await readToDo(element.path);

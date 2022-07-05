@@ -4,7 +4,8 @@ import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/services/theme_service.dart';
 
 class CompletedDetailView extends StatefulWidget {
-  const CompletedDetailView({Key? key}) : super(key: key);
+  final List<ToDo> items;
+  const CompletedDetailView({Key? key, this.items = const <ToDo>[]}) : super(key: key);
 
   @override
   State<CompletedDetailView> createState() => _CompletedDetailViewState();
@@ -24,15 +25,9 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
     setState(() {
       isLoading = true;
     });
-    // TODO: you will write code to read notes
-    items = [
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: true, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: true, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: true, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: true, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: true, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: true, createdDate: DateTime.now().toString()),
-    ];
+
+    items = widget.items;
+
     setState((){
       isLoading = false;
     });

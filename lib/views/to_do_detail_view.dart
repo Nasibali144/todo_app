@@ -5,7 +5,8 @@ import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/services/theme_service.dart';
 
 class ToDoDetailView extends StatefulWidget {
-  const ToDoDetailView({Key? key}) : super(key: key);
+  final List<ToDo> items;
+  const ToDoDetailView({Key? key, this.items = const <ToDo>[]}) : super(key: key);
 
   @override
   State<ToDoDetailView> createState() => _ToDoDetailViewState();
@@ -27,14 +28,16 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
       isLoading = true;
     });
     // TODO: you will write code to read notes
-    items = [
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-      ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-    ];
+    // items = [
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
+    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
+    // ];
+
+    items = widget.items;
     setState((){
       isLoading = false;
     });

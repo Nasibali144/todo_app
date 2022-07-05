@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/task_detail_screen.dart';
+import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 import 'package:todo_app/views/completed_detail_view.dart';
 import 'package:todo_app/views/to_do_detail_view.dart';
@@ -18,12 +19,34 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isCompleted = false;
+  bool isLoading = false;
+  List<ToDo> completedTodos = [];
+  List<ToDo> unCompletedTodos = [];
+
   final TextEditingController _newTodoController = TextEditingController();
 
   @override
   initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _getAllTodos();
+  }
+
+  void _getAllTodos() async {
+    isLoading = true;
+    setState(() {});
+
+    List<ToDo> items = await FileService.getAllToDo(widget.path!);
+    for(ToDo item in items) {
+      if(item.isCompleted) {
+        completedTodos.add(item);
+      } else {
+        unCompletedTodos.add(item);
+      }
+    }
+
+    isLoading = false;
+    setState(() {});
   }
 
   void _goBack() {
@@ -94,11 +117,12 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
       ),
       body: Stack(
         children: [
+          // #body
           TabBarView(
             controller: _tabController,
-            children: const [
-              ToDoDetailView(),
-              CompletedDetailView(),
+            children: [
+              ToDoDetailView(items: unCompletedTodos),
+              CompletedDetailView(items: completedTodos),
             ],
           ),
 
@@ -125,6 +149,14 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
                   ],
                 ),
               ),
+            ),
+          ),
+
+          // #isloading
+          Visibility(
+            visible: isLoading,
+            child: const Center(
+              child: CircularProgressIndicator(),
             ),
           )
         ],
