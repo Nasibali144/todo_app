@@ -41,7 +41,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
       createdDate: DateTime.now().toString(),
     );
     FocusScope.of(context).unfocus();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo,)));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo, state: DetailState.create,)));
   }
 
   @override

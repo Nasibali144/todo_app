@@ -1,7 +1,7 @@
 class ToDo {
   String taskName;
   String taskContent;
-  Object category;
+  String category;
   bool isImportant;
   bool isCompleted;
   String createdDate;
