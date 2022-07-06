@@ -72,14 +72,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 DueDateElement(onTap: () {
                   DateTime now = DateTime.now();
                   _toDo.dueDate = DateTime(now.year, now.month, now.day, now.hour).toString();
+                  setState(() {});
+                  Navigator.of(context).pop();
                 }, title: "Today",),
                 DueDateElement(onTap: () {
                   DateTime now = DateTime.now();
                   _toDo.dueDate = DateTime(now.year, now.month, now.day + 1, now.hour).toString();
+                  setState(() {});
+                  Navigator.of(context).pop();
                 }, title: "Tomorrow",),
                 DueDateElement(onTap: () {
                   DateTime now = DateTime.now();
                   _toDo.dueDate = DateTime(now.year, now.month, now.day + 7, now.hour).toString();
+                  setState(() {});
+                  Navigator.of(context).pop();
                 }, title: "Next Week",),
                 DueDateElement(onTap: () => _pickADate(), title: "Pick a Date", visible: true,),
               ],
@@ -159,7 +165,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
     isLoading = false;
     setState(() {});
-    if(mounted) Navigator.pop(context);
+    if(mounted) Navigator.pop(context, "refresh");
   }
 
   Future<void> _deleteToDo() async {
@@ -172,6 +178,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     setState(() {});
     if(mounted) Navigator.pop(context);
   }
+
+  void _clearDueDate() {
+    _toDo.dueDate = null;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -356,7 +368,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   ),
                                   Container(
                                       margin: const EdgeInsets.only(right: 33),
-                                      child: Icon(Icons.backspace_outlined, color: Colors.grey.shade700, size: 20,)),
+                                      child: IconButton(
+                                          icon: Icon(Icons.backspace_outlined, color: Colors.grey.shade700, size: 20,),
+                                          onPressed: _clearDueDate,
+                                          splashRadius: 20,
+                                      ),
+                                  ),
                                 ],
                               ),
                             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 
 class CompletedDetailView extends StatefulWidget {
@@ -30,6 +31,13 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
 
     setState((){
       isLoading = false;
+    });
+  }
+
+  void _deleteToDo(int index) {
+    FileService.deleteToDo(items[index]);
+    setState(() {
+      items.removeAt(index);
     });
   }
 
@@ -67,11 +75,7 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
                   color: ThemeService.colorPink,
                   child: const Icon(Icons.delete_outline, color: ThemeService.colorBackgroundLight,),
                 ),
-                onDismissed: (DismissDirection direction) {
-                  setState(() {
-                    items.removeAt(index);
-                  });
-                },
+                onDismissed: (DismissDirection direction) => _deleteToDo(index),
                 key: ValueKey<int>(toDo.hashCode),
                 child: ListTile(
                   contentPadding: const EdgeInsets.only(left: 10),

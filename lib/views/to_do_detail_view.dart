@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 
 class ToDoDetailView extends StatefulWidget {
@@ -27,15 +28,6 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
     setState(() {
       isLoading = true;
     });
-    // TODO: you will write code to read notes
-    // items = [
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: false, isCompleted: false, createdDate: DateTime.now().toString()),
-    //   ToDo(taskName: "To do chayxana app", taskContent: "i write code for notification", category: "folder name", isImportant: true, isCompleted: false, createdDate: DateTime.now().toString()),
-    // ];
 
     items = widget.items;
     setState((){
@@ -57,7 +49,13 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
     });
   }
 
-
+  void _deleteToDo(int index) {
+    FileService.deleteToDo(items[index]);
+    setState(() {
+      items.removeAt(index);
+    });
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,12 +156,7 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
                   backgroundColor:
                   MaterialStateProperty.all(const Color(0xffF85977)),
                 ),
-                onPressed: () {
-                  setState(() {
-                    items.removeAt(index);
-                  });
-                  Navigator.pop(context);
-                },
+                onPressed: () => _deleteToDo(index),
                 child: const Text('Delete'),
               ),
             )

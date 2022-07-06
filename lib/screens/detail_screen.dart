@@ -22,7 +22,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
   bool isLoading = false;
   List<ToDo> completedTodos = [];
   List<ToDo> unCompletedTodos = [];
-
+  String title = "Task List";
   final TextEditingController _newTodoController = TextEditingController();
 
   @override
@@ -32,7 +32,8 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
     _getAllTodos();
   }
 
-  void _getAllTodos() async {
+  Future<void> _getAllTodos() async {
+    title = widget.path!.substring(widget.path!.lastIndexOf("/") + 1);
     isLoading = true;
     setState(() {});
 
@@ -53,7 +54,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
     Navigator.pop(context);
   }
 
-  void _addATask() {
+  void _addATask() async {
     String directoryPath = widget.path!;
     ToDo toDo = ToDo(
       taskName: _newTodoController.text.trim(),
@@ -63,8 +64,15 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
       isCompleted: _isCompleted,
       createdDate: DateTime.now().toString(),
     );
+
     FocusScope.of(context).unfocus();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo, state: DetailState.create,)));
+    _newTodoController.clear();
+    _isCompleted = false;
+
+    String? result = await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo, state: DetailState.create,)));
+    if(result != null && result == "refresh" && mounted) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DetailScreen(path: widget.path,)));
+    }
   }
 
   @override
@@ -76,7 +84,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
         elevation: 0,
         backgroundColor: ThemeService.colorBackgroundLight,
         title: Text(
-          "Folder Name",
+          title,
           style: ThemeService.textStyleHeader(),
         ),
         leading: IconButton(
