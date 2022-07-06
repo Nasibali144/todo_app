@@ -24,6 +24,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   late ToDo _toDo;
   late TextEditingController titleController;
   late TextEditingController contentController;
+  DetailState detailState = DetailState.read;
 
   @override
   initState() {
@@ -36,6 +37,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     title = _toDo.category.toString().substring(_toDo.category.toString().lastIndexOf("/") + 1);
     titleController = TextEditingController(text: _toDo.taskName);
     contentController = TextEditingController(text: _toDo.taskContent);
+    detailState = widget.state;
     setState((){});
     _changeCompleted(_toDo.isCompleted);
   }
@@ -52,48 +54,50 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   void _selectDueDate() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          backgroundColor: ThemeService.colorBackgroundLight,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Text("Due", style: ThemeService.textStyleHeader(),),
+    if(detailState != DetailState.read) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor: ThemeService.colorBackgroundLight,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Text("Due", style: ThemeService.textStyleHeader(),),
+                    ),
+                    const Divider(color: ThemeService.colorBlack,),
+                    DueDateElement(onTap: () {
+                      DateTime now = DateTime.now();
+                      _toDo.dueDate = DateTime(now.year, now.month, now.day, now.hour).toString();
+                      setState(() {});
+                      Navigator.of(context).pop();
+                    }, title: "Today",),
+                    DueDateElement(onTap: () {
+                      DateTime now = DateTime.now();
+                      _toDo.dueDate = DateTime(now.year, now.month, now.day + 1, now.hour).toString();
+                      setState(() {});
+                      Navigator.of(context).pop();
+                    }, title: "Tomorrow",),
+                    DueDateElement(onTap: () {
+                      DateTime now = DateTime.now();
+                      _toDo.dueDate = DateTime(now.year, now.month, now.day + 7, now.hour).toString();
+                      setState(() {});
+                      Navigator.of(context).pop();
+                    }, title: "Next Week",),
+                    DueDateElement(onTap: () => _pickADate(), title: "Pick a Date", visible: true,),
+                  ],
                 ),
-                const Divider(color: ThemeService.colorBlack,),
-                DueDateElement(onTap: () {
-                  DateTime now = DateTime.now();
-                  _toDo.dueDate = DateTime(now.year, now.month, now.day, now.hour).toString();
-                  setState(() {});
-                  Navigator.of(context).pop();
-                }, title: "Today",),
-                DueDateElement(onTap: () {
-                  DateTime now = DateTime.now();
-                  _toDo.dueDate = DateTime(now.year, now.month, now.day + 1, now.hour).toString();
-                  setState(() {});
-                  Navigator.of(context).pop();
-                }, title: "Tomorrow",),
-                DueDateElement(onTap: () {
-                  DateTime now = DateTime.now();
-                  _toDo.dueDate = DateTime(now.year, now.month, now.day + 7, now.hour).toString();
-                  setState(() {});
-                  Navigator.of(context).pop();
-                }, title: "Next Week",),
-                DueDateElement(onTap: () => _pickADate(), title: "Pick a Date", visible: true,),
-              ],
-            ),
-          ),
-        );
-      }
-    );
+              ),
+            );
+          }
+      );
+    }
   }
 
   void _pickADate() {
@@ -184,6 +188,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     setState(() {});
   }
 
+  void _readToEdit() {
+    detailState = DetailState.edit;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,16 +213,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           ),
         ),
         actions: [
-          if(widget.state == DetailState.read)
+          if(detailState == DetailState.read)
             IconButton(
               splashRadius: 20,
               icon: const Icon(
                 Icons.edit,
                 color: ThemeService.colorBlack,
               ),
-              onPressed: () {
-                // TODO: from read state to edit state
-              },
+              onPressed: _readToEdit,
             )
           else
             IconButton(
@@ -267,6 +274,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       height: 50,
                                       width: MediaQuery.of(context).size.width * 0.65,
                                       child: TextField(
+                                        readOnly: detailState == DetailState.read,
                                         controller: titleController,
                                         style: ThemeService.textStyleHeader(),
                                         decoration: const InputDecoration(
@@ -300,6 +308,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               color: Color(0x1f1c1b1f),
                             ),
                           ),
+
+                          // #date
                           GestureDetector(
                             onTap: _selectDueDate,
                             child: _toDo.dueDate == null
@@ -391,10 +401,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           const SizedBox(
                             height: 18,
                           ),
+
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             height: 248,
                             child: TextField(
+                              readOnly: detailState == DetailState.read,
                               controller: contentController,
                               maxLines: 13,
                               decoration: const InputDecoration(
@@ -433,7 +445,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         ),
                       ),
                       Visibility(
-                        visible: widget.state != DetailState.create,
+                        visible: detailState != DetailState.create,
                         child: IconButton(
                           splashRadius: 20,
                           icon: const Icon(Icons.delete_outline, color: Color(0x991c1b1f)),

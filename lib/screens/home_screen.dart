@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           trash = element;
         }
       }
-      listDirectory.remove(trash!);
+      listDirectory.remove(trash);
       setState((){});
     } else {
       String pathAndroid = "storage/emulated/0/TodoApp";

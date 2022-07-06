@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/screens/task_detail_screen.dart';
 import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 
@@ -34,13 +35,6 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
     });
   }
 
-  void _deleteToDo(int index) {
-    FileService.deleteToDo(items[index]);
-    setState(() {
-      items.removeAt(index);
-    });
-  }
-
   void _moveToDoCompleted(bool? tapped, ToDo toDo) {
     // TODO this note moved to completed
     setState(() {
@@ -53,6 +47,17 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
     setState((){
       toDo.isImportant = !toDo.isImportant;
     });
+  }
+
+  void _deleteToDo(int index) {
+    FileService.deleteToDo(items[index]);
+    setState(() {
+      items.removeAt(index);
+    });
+  }
+
+  void _openTaskDetailPage(ToDo toDo) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo)));
   }
 
   @override
@@ -78,6 +83,7 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
                 onDismissed: (DismissDirection direction) => _deleteToDo(index),
                 key: ValueKey<int>(toDo.hashCode),
                 child: ListTile(
+                  onTap: () => _openTaskDetailPage(toDo),
                   contentPadding: const EdgeInsets.only(left: 10),
                   leading: Checkbox(
                     value: toDo.isCompleted,

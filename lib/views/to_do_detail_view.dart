@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/models/todo_model.dart';
-import 'package:todo_app/services/file_service.dart';
+import 'package:todo_app/screens/task_detail_screen.dart';
 import 'package:todo_app/services/theme_service.dart';
+import '../services/file_service.dart';
 
 class ToDoDetailView extends StatefulWidget {
   final List<ToDo> items;
@@ -57,6 +58,10 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
     Navigator.pop(context);
   }
 
+  void _openTaskDetailPage(ToDo toDo) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -86,6 +91,7 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
                 ),
                 key:  ValueKey(toDo),
                 child: ListTile(
+                  onTap: () => _openTaskDetailPage(toDo),
                   contentPadding: const EdgeInsets.only(left: 10),
                   leading: Checkbox(
                     value: toDo.isCompleted,
