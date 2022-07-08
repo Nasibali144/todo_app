@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/services/file_service.dart';
+import 'package:todo_app/services/util_service.dart';
 import 'package:todo_app/views/due_date_element_view.dart';
 import '../services/theme_service.dart';
 
@@ -21,6 +22,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   bool isLoading = false;
   String title = "Task list";
   String taskTime = "Created on Mon, 28 March";
+  String oldName = "For Update";
   late ToDo _toDo;
   late TextEditingController titleController;
   late TextEditingController contentController;
@@ -165,7 +167,27 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     _toDo.taskName = taskName;
     _toDo.taskContent = taskContent;
 
-    await FileService.createToDo(_toDo);
+    if(widget.state == DetailState.create) {
+      bool isExist = await FileService.existToDo(_toDo);
+      if(isExist) {
+        if(mounted) Utils.fireSnackBar("The name “${_toDo.taskName}” is already taken. Please choose a different name.", context);
+        isLoading = false;
+        setState(() {});
+        return;
+      }
+      await FileService.createToDo(_toDo);
+    } else if(oldName == _toDo.taskName) {
+      await FileService.createToDo(_toDo);
+    } else {
+      bool isExist = await FileService.existToDo(_toDo);
+      if(isExist) {
+        if(mounted) Utils.fireSnackBar("The name “${_toDo.taskName}” is already taken. Please choose a different name.", context);
+        isLoading = false;
+        setState(() {});
+        return;
+      }
+      await FileService.updateTodo(oldName, _toDo);
+    }
 
     isLoading = false;
     setState(() {});
@@ -180,7 +202,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
     isLoading = false;
     setState(() {});
-    if(mounted) Navigator.pop(context);
+    if(mounted) Navigator.pop(context, "refresh");
   }
 
   void _clearDueDate() {
@@ -190,6 +212,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   void _readToEdit() {
     detailState = DetailState.edit;
+    oldName = _toDo.taskName;
     setState(() {});
   }
 

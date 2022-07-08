@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:todo_app/screens/detail_screen.dart';
 import 'package:todo_app/screens/task_detail_screen.dart';
 import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
@@ -56,8 +57,13 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
     });
   }
 
-  void _openTaskDetailPage(ToDo toDo) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo)));
+  void _openTaskDetailPage(ToDo toDo) async {
+    String? result = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => TaskDetailScreen(toDo: toDo)));
+    if(result != null && result == "refresh" && mounted) {
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => DetailScreen(path: toDo.category,)));
+    }
   }
 
   @override
