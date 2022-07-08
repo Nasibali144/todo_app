@@ -37,11 +37,14 @@ class _ToDoDetailViewState extends State<ToDoDetailView> {
     });
   }
 
-  void _moveToDoCompleted(bool? tapped, ToDo toDo) {
-    // TODO this note moved to completed
-    setState(() {
-      toDo.isCompleted = tapped!;
-    });
+  void _moveToDoCompleted(bool? tapped, ToDo toDo) async {
+    toDo.isCompleted = tapped!;
+    await FileService.createToDo(toDo);
+    setState(() {});
+    if(mounted) {
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => DetailScreen(path: toDo.category,)));
+    }
   }
 
   void _addOrRemoveToDoInImportant(ToDo toDo) {

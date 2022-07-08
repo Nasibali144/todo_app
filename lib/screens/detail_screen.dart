@@ -33,6 +33,7 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
   }
 
   Future<void> _getAllTodos() async {
+    print(" started");
     title = widget.path!.substring(widget.path!.lastIndexOf("/") + 1);
     isLoading = true;
     setState(() {});
@@ -45,9 +46,9 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
         unCompletedTodos.add(item);
       }
     }
-
     isLoading = false;
     setState(() {});
+    print(" Finished");
   }
 
   void _goBack() {
