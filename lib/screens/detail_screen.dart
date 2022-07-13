@@ -20,8 +20,6 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
   late TabController _tabController;
   bool _isCompleted = false;
   bool isLoading = false;
-  List<ToDo> completedTodos = [];
-  List<ToDo> unCompletedTodos = [];
   String title = "Task List";
   final TextEditingController _newTodoController = TextEditingController();
 
@@ -29,26 +27,12 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
   initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _getAllTodos();
+    _getPageName();
   }
 
-  Future<void> _getAllTodos() async {
-    print(" started");
+  void _getPageName() {
     title = widget.path!.substring(widget.path!.lastIndexOf("/") + 1);
-    isLoading = true;
     setState(() {});
-
-    List<ToDo> items = await FileService.getAllToDo(widget.path!);
-    for(ToDo item in items) {
-      if(item.isCompleted) {
-        completedTodos.add(item);
-      } else {
-        unCompletedTodos.add(item);
-      }
-    }
-    isLoading = false;
-    setState(() {});
-    print(" Finished");
   }
 
   void _goBack() {
@@ -130,8 +114,8 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
           TabBarView(
             controller: _tabController,
             children: [
-              ToDoDetailView(items: unCompletedTodos),
-              CompletedDetailView(items: completedTodos),
+              ToDoDetailView(path: widget.path),
+              CompletedDetailView(path: widget.path),
             ],
           ),
 

@@ -7,8 +7,8 @@ import 'package:todo_app/services/file_service.dart';
 import 'package:todo_app/services/theme_service.dart';
 
 class CompletedDetailView extends StatefulWidget {
-  final List<ToDo> items;
-  const CompletedDetailView({Key? key, this.items = const <ToDo>[]}) : super(key: key);
+  final String? path;
+  const CompletedDetailView({Key? key, this.path}) : super(key: key);
 
   @override
   State<CompletedDetailView> createState() => _CompletedDetailViewState();
@@ -24,22 +24,29 @@ class _CompletedDetailViewState extends State<CompletedDetailView> {
     _readToDo();
   }
 
-  void _readToDo() {
-    setState(() {
-      isLoading = true;
-    });
+  void _readToDo() async {
+    isLoading = true;
+    setState(() {});
 
-    items = widget.items;
+    List<ToDo> todos = await FileService.getAllToDo(widget.path!);
+    items = [];
+    for(ToDo item in todos) {
+      if(item.isCompleted) {
+        items.add(item);
+      }
+    }
 
-    setState((){
-      isLoading = false;
-    });
+    isLoading = false;
+    setState((){});
   }
 
   void _moveToDoCompleted(bool? tapped, ToDo toDo) async {
     toDo.isCompleted = tapped!;
     await FileService.createToDo(toDo);
     setState(() {});
+    if(mounted) {
+      _readToDo();
+    }
   }
 
   void _addOrRemoveToDoInImportant(ToDo toDo) {
